@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: couldai_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: couldai_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  token-server:
+    build: .
+    container_name: couldai_token_server
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - APP_ID=${APP_ID}
+      - APP_CERTIFICATE=${APP_CERTIFICATE}
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
